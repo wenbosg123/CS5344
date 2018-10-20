@@ -22,7 +22,7 @@ def main(argv=None):
     conf = SparkConf()
     sc = SparkContext(conf=conf)
 
-    lines = sc.textFile(sys.argv[1])
+    lines = sc.textFile(argv)
     features = lines.flatMap(line_to_feature)
     s = features.map(lambda t: (t[0], t[1][1] ** 2)).reduceByKey(lambda a, b: a + b).map(
         lambda t: (t[0], math.sqrt(t[1])))
@@ -31,7 +31,7 @@ def main(argv=None):
         lambda t: ((t[1][0][0], t[1][1][0]), t[1][0][1] * t[1][1][1])).reduceByKey(lambda a, b: a + b)
     result = relevance.sortBy(lambda t: t[1], ascending=False).collect()
 
-    with open(sys.argv[2], 'w+') as f:
+    with open(argv[2], 'w+') as f:
         for r in result:
             f.write('%s %s %f\n' % (r[0][0], r[0][1], r[1]))
 
