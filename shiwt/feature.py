@@ -22,7 +22,7 @@ def main(argv=None):
     conf = SparkConf()
     sc = SparkContext(conf=conf)
 
-    lines = sc.textFile(argv)
+    lines = sc.textFile(argv[1])
     features = lines.flatMap(line_to_feature)
     s = features.map(lambda t: (t[0], t[1][1] ** 2)).reduceByKey(lambda a, b: a + b).map(
         lambda t: (t[0], math.sqrt(t[1])))
